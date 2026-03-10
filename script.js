@@ -1,24 +1,43 @@
 const API_KEY = "14e1f930677171133a7e7d358a47fbbd";
+let mapa = null; // Variável global para o mapa
+let marcador = null; // Variável global para o marcador
 
 window.onload = function() {
     renderizarHistorico();
     const climaSalvo = localStorage.getItem('clima_cache');
     if (climaSalvo) {
-        renderizarClima(JSON.parse(climaSalvo));
+        const dados = JSON.parse(climaSalvo);
+        renderizarClima(dados);
+        atualizarMapa(dados.coord.lat, dados.coord.lon, dados.name);
     }
 };
 
-// --- DESAFIO NÍVEL 1: HISTÓRICO DAS ÚLTIMAS 5 ---
+// --- FUNÇÃO PARA O MAPA ---
+function atualizarMapa(lat, lon, nomeCidade) {
+    const mapaDiv = document.getElementById('mapa');
+    mapaDiv.style.display = "block"; // Mostra o mapa
+
+    // Se o mapa ainda não existe, cria ele
+    if (mapa === null) {
+        mapa = L.map('mapa').setView([lat, lon], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(mapa);
+        marcador = L.marker([lat, lon]).addTo(mapa);
+    } else {
+        // Se já existe, apenas move a visão e o marcador
+        mapa.setView([lat, lon], 12);
+        marcador.setLatLng([lat, lon]);
+    }
+    marcador.bindPopup(`<b>${nomeCidade}</b>`).openPopup();
+}
+
+// --- HISTÓRICO ---
 function salvarNoHistorico(cidade) {
     let cidades = JSON.parse(localStorage.getItem('historico_cidades')) || [];
-    
-    // Remove a cidade se ela já existir (para não duplicar) e adiciona no início
     cidades = cidades.filter(c => c.toLowerCase() !== cidade.toLowerCase());
     cidades.unshift(cidade);
-    
-    // Mantém apenas as 5 últimas
     cidades = cidades.slice(0, 5);
-    
     localStorage.setItem('historico_cidades', JSON.stringify(cidades));
     renderizarHistorico();
 }
@@ -26,32 +45,23 @@ function salvarNoHistorico(cidade) {
 function renderizarHistorico() {
     const container = document.getElementById('historico');
     const cidades = JSON.parse(localStorage.getItem('historico_cidades')) || [];
-    
-    container.innerHTML = cidades.map(cidade => 
-        `<button class="btn-hist" onclick="buscarClimaPeloNome('${cidade}')">${cidade}</button>`
+    container.innerHTML = cidades.map(c => 
+        `<button class="btn-hist" onclick="buscarClimaPeloNome('${c}')">${c}</button>`
     ).join('');
 }
 
-// Auxiliar para os botões do histórico
 function buscarClimaPeloNome(cidade) {
     document.getElementById('cidade-input').value = cidade;
     buscarClima();
 }
 
-// --- DESAFIO NÍVEL 2: GEOLOCALIZAÇÃO ---
+// --- BUSCA E GEOLOCALIZAÇÃO ---
 function pegarLocalizacao() {
     if (navigator.geolocation) {
         document.getElementById('resultado').innerHTML = "<p class='loading-text'>Acessando GPS...</p>";
         navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-            chamadaApi(`lat=${lat}&lon=${lon}`);
-        }, () => {
-            alert("Não foi possível acessar sua localização. Verifique as permissões do navegador.");
-            document.getElementById('resultado').innerHTML = "";
+            chamadaApi(`lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
         });
-    } else {
-        alert("Seu navegador não suporta geolocalização.");
     }
 }
 
@@ -72,15 +82,16 @@ async function chamadaApi(parametro) {
 
         if (!response.ok) throw new Error(dados.message);
 
-        // Salva a última pesquisa principal
         localStorage.setItem('clima_cache', JSON.stringify(dados));
-        
-        // Salva no histórico de botões rápidos
         salvarNoHistorico(dados.name);
-        
         renderizarClima(dados);
+        
+        // CHAMA O MAPA COM AS COORDENADAS DA API
+        atualizarMapa(dados.coord.lat, dados.coord.lon, dados.name);
+
     } catch (erro) {
-        resultadoDiv.innerHTML = `<p class="error-message">Erro: ${erro.message === 'city not found' ? 'Cidade não encontrada' : erro.message}</p>`;
+        resultadoDiv.innerHTML = `<p class="error-message">Erro: Cidade não encontrada</p>`;
+        document.getElementById('mapa').style.display = "none";
     }
 }
 
@@ -94,8 +105,7 @@ function renderizarClima(dados) {
             <img class="weather-icon" src="${iconeUrl}" alt="Clima">
             <div class="temp-main">${Math.round(dados.main.temp)}°C</div>
             <p class="description">${dados.weather[0].description}</p>
-            <div style="margin-top: 15px; font-size: 0.85rem; color: #64748b;">
-                Mín: ${Math.round(dados.main.temp_min)}°C | Máx: ${Math.round(dados.main.temp_max)}°C<br>
+            <div style="margin-top: 10px; font-size: 0.85rem; color: #64748b;">
                 Umidade: ${dados.main.humidity}% | Vento: ${dados.wind.speed}km/h
             </div>
         </div>

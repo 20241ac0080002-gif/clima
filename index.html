@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clima Radar Pro</title>
+    <title>Clima Radar Pro + Mapa</title>
+    <!-- CSS do Mapa (Leaflet) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -18,14 +20,18 @@
             <button onclick="pegarLocalizacao()" class="btn-geo">📍 Usar Meu Local</button>
         </div>
 
-        <!-- Botões do Histórico -->
         <div id="historico" class="historico-container"></div>
 
         <div id="resultado">
             <!-- Os dados aparecem aqui -->
         </div>
+
+        <!-- DIV ONDE O MAPA SERÁ CRIADO -->
+        <div id="mapa"></div>
     </div>
 
+    <!-- Script do Mapa (Leaflet) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
