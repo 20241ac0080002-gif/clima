@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --geo-color: #10b981;
+    --geo-hover: #059669;
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+}
+
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    width: 100%; max-width: 450px;
+    text-align: center;
+}
+
+h1 { color: var(--text-main); font-size: 1.8rem; margin-bottom: 0.5rem; }
+p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+.search-box {
+    display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem;
+}
+
+input {
+    width: 100%; padding: 14px; border: 2px solid #e5e7eb;
+    border-radius: 12px; outline: none; font-size: 1rem;
+    transition: 0.3s;
+}
+
+input:focus { border-color: var(--primary-color); }
+
+button {
+    width: 100%; padding: 14px; border: none; border-radius: 12px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: all 0.3s ease; color: white;
+    background: var(--primary-color);
+}
+
+button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+.btn-geo { background: var(--geo-color); }
+.btn-geo:hover { background: var(--geo-hover); }
+
+/* Histórico de Cidades */
+.historico-container {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; margin-bottom: 1.5rem;
+}
+
+.btn-hist {
+    background: #f3f4f6; color: #4b5563; padding: 6px 15px;
+    border-radius: 20px; font-size: 0.8rem; width: auto;
+}
+
+/* Card de Resultado */
+.weather-card {
+    background: #f8fafc; padding: 20px; border-radius: 15px;
+    border-left: 5px solid var(--primary-color);
+    animation: fadeIn 0.5s ease-out; text-align: center;
+}
+
+.temp-main { font-size: 3rem; font-weight: 600; color: var(--text-main); }
+.weather-icon { width: 80px; height: 80px; margin: 0 auto; }
+
+.error-message { color: #ef4444; background: #fef2f2; padding: 10px; border-radius: 8px; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
