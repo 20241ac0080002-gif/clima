@@ -86,3 +86,26 @@ button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+/* ... (mantenha o que você já tem e adicione isso no final) ... */
+
+#mapa {
+    height: 250px;
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 15px;
+    border: 3px solid white;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    display: none; /* Começa escondido, aparece após a busca */
+    z-index: 1; /* Garante que o mapa não fique em cima de menus se houver */
+}
+
+/* Ajuste no container para caber o mapa */
+.container {
+    max-width: 500px; /* Aumentei um pouco a largura */
+}
+
+.loading-text {
+    color: var(--primary-color);
+    margin: 10px 0;
+    font-weight: 600;
+}
